@@ -1,5 +1,3 @@
-// Testing out the ability to return a simple payload.
-
 function doGet() {
   
 //  let testResponse = {
