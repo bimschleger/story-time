@@ -1,11 +1,12 @@
+/*
+
+Immediately returns a story with existing variables.
+
+@return storyObject {object} 
+
+*/
+
 function doGet() {
-  
-//  let testResponse = {
-//    "name": "Brian",
-//    "job": "balloon magician"
-//  }
-//  
-//    return ContentService.createTextOutput(JSON.stringify(testResponse)).setMimeType(ContentService.MimeType.JSON); 
   
   let storyParts = getStoryValues();
   Logger.log(storyParts);
@@ -14,7 +15,51 @@ function doGet() {
   Logger.log("message: " + storyObject.story)
 
   return ContentService.createTextOutput(JSON.stringify(storyObject)).setMimeType(ContentService.MimeType.JSON);   
+}
 
+
+/*
+
+Accept the custom inputs form the user, add them to the appropriate sheet, return them in a story
+
+@param e {object} event containing incoming parameters
+@return storyObject {object} 
+
+*/
+
+function doPost(e) {
+
+  // Basic setup for the rest of the function
+  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
+  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
+  let sheetNames = getSheetNames(ss);
+  let storyParts = {}
+  
+  // Assigns values from the  inbound JSON
+  let name1 = e.parameter.name;
+  let job1 =  e.parameter.job1;
+  let food1 = e.parameter.food1;
+  
+  storyParts.name1 = name1;
+  storyParts.job1 = job1;
+  storyParts.food1 = food1;
+
+  // Check to see if the sheetName is already in the storyParts object
+  let sheetNamesNeeded = [];
+  
+  sheetNames.forEach(function(sheet) {
+    if (!Object.keys(storyParts).includes(sheet)) {
+      sheetNamesNeeded.push(sheet);
+    }
+  });
+  
+  let message = {"test": "testvalue"};
+  return ContentService.createTextOutput(JSON.stringify(message)).setMimeType(ContentService.MimeType.JSON);   
+   
+
+  // accept a name, job, and food
+  // get phrase1, phrase2, and phrase3
+  
 }
 
 
