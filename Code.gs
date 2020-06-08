@@ -28,33 +28,61 @@ Accept the custom inputs form the user, add them to the appropriate sheet, retur
 */
 
 function doPost(e) {
-
-  // Basic setup for the rest of the function
-  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
-  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
-  let sheetNames = getSheetNames(ss);
-  let storyParts = {}
   
-  // Assigns values from the  inbound JSON
-  let name1 = e.parameter.name;
-  let job1 =  e.parameter.job1;
-  let food1 = e.parameter.food1;
+  // Create storyParts object
+  let storyParts = {
+    "name1": null,
+    "job1": null,
+    "food1": null,
+    "phrase1": null,
+    "phrase2": null,
+    "phrase3": null
+  }
   
-  storyParts.name1 = name1;
-  storyParts.job1 = job1;
-  storyParts.food1 = food1;
+  // Get POST values
+  let request = e.postData.contents;
+  Logger.log("Got postData contents: " + request);
+  
+  // Parse POST values as JSON
+  let requestJson = JSON.parse(request);
+  Logger.log("Got JSON from postData: " + requestJson);
+  
+  
+  
+  
+  return ContentService.createTextOutput(JSON.stringify(requestJson)).setMimeType(ContentService.MimeType.JSON);   
+  
+  
+  
+//  // Basic setup for the rest of the function
+//  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
+//  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
+//  let sheetNames = getSheetNames(ss);
+//  
+//  // Assigns values from the  inbound JSON
+//  let name1 = requestJson.name1;
+//  Logger.log("Added variable (" + name1  + ")");
+//             
+//  let job1 =  requestJson.job1;
+//  Logger.log("Added variable (" + job1  + ")");
+//             
+//  let food1 = requestJson.food1;
+//  Logger.log("Added variable (" + food1  + ")");
+//  
+//  storyParts.name1 = name1;
+//  storyParts.job1 = job1;
+//  storyParts.food1 = food1;
 
   // Check to see if the sheetName is already in the storyParts object
-  let sheetNamesNeeded = [];
+//  let sheetNamesNeeded = [];
+//  
+//  sheetNames.forEach(function(sheet) {
+//    if (!Object.keys(storyParts).includes(sheet)) {
+//      sheetNamesNeeded.push(sheet);
+//    }
+//  });
   
-  sheetNames.forEach(function(sheet) {
-    if (!Object.keys(storyParts).includes(sheet)) {
-      sheetNamesNeeded.push(sheet);
-    }
-  });
-  
-  let message = {"test": "testvalue"};
-  return ContentService.createTextOutput(JSON.stringify(message)).setMimeType(ContentService.MimeType.JSON);   
+//  let message = storyParts;
    
 
   // accept a name, job, and food
@@ -87,7 +115,7 @@ function getStoryValues() {
   sheetNames.forEach(function(key) {
     Logger.log("Started forEach loop");
     
-    let value = getSheetValue(ss, key);
+    let value = getRandomValueFromSheet(ss, key);
     storyContent[key] = value;
     Logger.log("Added content: Key (" + key + ") and value (" + value +")");
   });
@@ -132,7 +160,7 @@ function getSheetNames(ss) {
 
 */
 
-function getSheetValue(ss, sheetName) {
+function getRandomValueFromSheet(ss, sheetName) {
   
   // Access specific spreadsheet by name
   let sheet = ss.getSheetByName(sheetName);
