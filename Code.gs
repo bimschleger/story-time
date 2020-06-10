@@ -177,7 +177,9 @@ function compileStory(storyParts) {
 
 TODOs
 
-- Add user-submitted inputs to the correct sheet in sheets
-- email notification to me when new user submitteed content is added
+- Add user-submitted inputs to the correct sheet in sheets. find last now, add value to lastrow+1
+- Email notification to me when new user submitteed content is added. use standard GmailApp class
+- Text to speech to share the audio file of the story. use something like https://aws.amazon.com/polly/ to handle TTS
+- More complex story branching
 
 */
