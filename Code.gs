@@ -181,5 +181,6 @@ TODOs
 - Email notification to me when new user submitteed content is added. use standard GmailApp class
 - Text to speech to share the audio file of the story. use something like https://aws.amazon.com/polly/ to handle TTS
 - More complex story branching
+- Log each unique execution: datetime, get/post, read/listen/write, name, job, food, phrase1, phrase2, phrase3
 
 */
