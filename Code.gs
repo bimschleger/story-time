@@ -1,6 +1,6 @@
 /*
 
-Immediately returns a story with existing variables.
+Immediately returns a story with variables from the spreadsheet.
 
 @return storyObject {object} 
 
@@ -8,9 +8,15 @@ Immediately returns a story with existing variables.
 
 function doGet() {
   
-  let storyParts = getStoryValues();
+  // Create storyparts object
+  let emptyStoryParts = createEmptyStoryParts();
+  Logger.log("Created emptyStoryParts object");
+  
+  // Add values for each key with a null value
+  let storyParts = setNullStoryParts(emptyStoryParts);
   Logger.log(storyParts);
   
+  // Compile story into one string
   let storyObject = compileStory(storyParts);
   Logger.log("message: " + storyObject.story)
 
@@ -20,16 +26,49 @@ function doGet() {
 
 /*
 
-Accept the custom inputs form the user, add them to the appropriate sheet, return them in a story
+Accept the custom inputs from the user, return them in a story
 
 @param e {object} event containing incoming parameters
-@return storyObject {object} 
+@return storyObject {object} Contains the concatenated message sent to the user
 
 */
 
 function doPost(e) {
   
-  // Create storyParts object
+  Logger.log("Post received");
+  
+  // Create empty storyParts object
+  let emptyStoryParts = createEmptyStoryParts();
+  
+  // Get POST values
+  let request = JSON.parse(e.postData.contents);
+  Logger.log("Post contents: " + JSON.stringify(request));
+  
+  // Merge user request into emptyStoryParts
+  let storyParts = Object.assign(emptyStoryParts, request);
+  
+  // Determine values for each key with a null value
+  storyParts = setNullStoryParts(storyParts)
+  Logger.log("All keys have non-null values.");
+  
+  // Compile story into one string
+  let storyObject = compileStory(storyParts);
+  Logger.log("Message: " + storyObject.story);
+  
+  return ContentService.createTextOutput(JSON.stringify(storyObject)).setMimeType(ContentService.MimeType.JSON);    
+}
+
+
+/*
+
+Creates the blank story object for use in both doGet and doPost.
+
+@return storyParts {object} an object containing null values for each of the required story keys.
+
+*/
+
+function createEmptyStoryParts() {
+  
   let storyParts = {
     "name1": null,
     "job1": null,
@@ -37,130 +76,47 @@ function doPost(e) {
     "phrase1": null,
     "phrase2": null,
     "phrase3": null
-  }
+  };
   
-  // Get POST values
-  let request = e.postData.contents;
-  Logger.log("Got postData contents: " + request);
-  
-  // Parse POST values as JSON
-  let requestJson = JSON.parse(request);
-  Logger.log("Got JSON from postData: " + requestJson);
-  
-  
-  
-  
-  return ContentService.createTextOutput(JSON.stringify(requestJson)).setMimeType(ContentService.MimeType.JSON);   
-  
-  
-  
-//  // Basic setup for the rest of the function
-//  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
-//  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
-//  let sheetNames = getSheetNames(ss);
-//  
-//  // Assigns values from the  inbound JSON
-//  let name1 = requestJson.name1;
-//  Logger.log("Added variable (" + name1  + ")");
-//             
-//  let job1 =  requestJson.job1;
-//  Logger.log("Added variable (" + job1  + ")");
-//             
-//  let food1 = requestJson.food1;
-//  Logger.log("Added variable (" + food1  + ")");
-//  
-//  storyParts.name1 = name1;
-//  storyParts.job1 = job1;
-//  storyParts.food1 = food1;
-
-  // Check to see if the sheetName is already in the storyParts object
-//  let sheetNamesNeeded = [];
-//  
-//  sheetNames.forEach(function(sheet) {
-//    if (!Object.keys(storyParts).includes(sheet)) {
-//      sheetNamesNeeded.push(sheet);
-//    }
-//  });
-  
-//  let message = storyParts;
-   
-
-  // accept a name, job, and food
-  // get phrase1, phrase2, and phrase3
-  
-}
-
-
-/* 
-
-Creates the JSON object that contains the values for our story
-
-@param ss {object} The entire spreadsheet in which we will operate.
-@return content {object} JSON object containing keys and values for our story.
-
-*/
-
-function getStoryValues() {
-  
-  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
-  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
-  let sheetNames = getSheetNames(ss);
-  
-  Logger.log("All sheet names are: " + sheetNames);
-  
-  // Empty object into which we'll add keys and values
-  var storyContent = {}
-  
-  // Get a single value from each sheet and add the key/value to the content object
-  sheetNames.forEach(function(key) {
-    Logger.log("Started forEach loop");
-    
-    let value = getRandomValueFromSheet(ss, key);
-    storyContent[key] = value;
-    Logger.log("Added content: Key (" + key + ") and value (" + value +")");
-  });
-  
-  Logger.log("Completed forEach loop.")
-  
-  return storyContent;
+  return storyParts;
 }
 
 
 /*
 
-Returns the names of all of the sheets in the spreadsheet.
+Finds all null fields, and sets the random value to them.
 
-@param ss {object} The entire spreadsheet object.
-@return sheetNames {array} Array containing the names of each sheet
+@param storyParts {object} Usually a storyParts object with several null keys.
+@return storyParts {object} The same object returned with a value for each key
 
 */
 
-function getSheetNames(ss) {
-  Logger.log("Started getSheetNames function");
+function setNullStoryParts(storyParts) {
   
-  let sheets = ss.getSheets();
-  let sheetNames = [];
-  
-  // Add the name of each sheet to an the "sheetNames" array.
-  for(i in sheets) {
-    let sheetName = sheets[i].getName();
-    sheetNames.push(sheetName);
-    Logger.log("Pushed sheetName: " + sheetName);
+  // Get a random value for each key that is null
+  for (let [key, value] of Object.entries(storyParts)) {
+    if (value === null) {
+      let randomValue = getRandomValueFromSheet(key);
+      storyParts[key] = randomValue;
+      Logger.log("Set key (" + key + ") to " + randomValue);
+    }
   };
   
-  return sheetNames;
+  return storyParts;
 }
 
 
-/* Gets one value the variable on particular sheet
+/* Gets one value the variable on a particular sheet
 
-@paramn ss {object} the spreadsheet object in which all of the sheets live;
 @param sheetName {string} The name of the spradsheet that we want to grab data from.
 @return value {string} The random value from the specified sheet that we'll use for the story
 
 */
 
-function getRandomValueFromSheet(ss, sheetName) {
+function getRandomValueFromSheet(sheetName) {
+  
+  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
+  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
   
   // Access specific spreadsheet by name
   let sheet = ss.getSheetByName(sheetName);
@@ -171,11 +127,9 @@ function getRandomValueFromSheet(ss, sheetName) {
   let rowsData = rowsMax -1;
   let startingRow = 2;
   let startingColumn = 1;
-  Logger.log("Got (" + rowsData + ") rows for sheet (" + sheetName + ").");
   
-  // Get values from the sheet
+  // Get value from the sheet
   let values = sheet.getRange(startingRow, startingColumn, rowsData).getValues();
-  Logger.log(sheetName + " values length: " + rowsData);
   
   // Select single value from data
   let index = Math.floor(Math.random() * rowsData);
@@ -186,7 +140,6 @@ function getRandomValueFromSheet(ss, sheetName) {
   Logger.log(sheetName + " value = " + value);
   
   return value;
-  
 }
 
 
@@ -211,9 +164,20 @@ function compileStory(storyParts) {
   let message2 = name1 + " " + phrase2 + " " + job1 + ". ";
   let message3 = name1 + " " + phrase3 + " " + food1;
   let messageTotal = message1 + message2 + message3;
+  Logger.log("Compiled message: "+ messageTotal);
   
   let storyObject = {
     story: messageTotal
   }
+  
   return storyObject;
 }
+
+/*
+
+TODOs
+
+- Add user-submitted inputs to the correct sheet in sheets
+- email notification to me when new user submitteed content is added
+
+*/
