@@ -44,6 +44,9 @@ function doPost(e) {
   let request = JSON.parse(e.postData.contents);
   Logger.log("Post contents: " + JSON.stringify(request));
   
+  // Add user inputs to the spreadsheet
+  addUserInputsToSheet(request);
+  
   // Merge user request into emptyStoryParts
   let storyParts = Object.assign(emptyStoryParts, request);
   
@@ -173,6 +176,66 @@ function compileStory(storyParts) {
   return storyObject;
 }
 
+
+/*
+
+Send an email notification whenever new content is added to the spreadsheet.
+
+*/
+
+function sendEmailNotification() {
+  //stuff
+}
+
+
+/* 
+
+Add user-submitted words to the spreadsheet.
+
+@param request {object} the JSON object of the user customized inputs from the Shortcuts app
+
+*/
+
+function addUserInputsToSheet(request) {
+  
+  // For each key/value pair in the requests object, add the value to the sheet
+  for (let [sheetName, value] of Object.entries(request)) {
+    addSingleValueToSheet(sheetName, value);
+  };
+  
+  Logger.log("Added all values to the spreadsheet.");
+ 
+  
+}
+
+
+/* 
+
+Add a single value to a particular spreadsheet.
+
+@param sheetName {string} Name of the sheet to which the system writes the value
+@param value {string} Value that the system will append to the last row of the specified sheet
+
+*/
+
+function addSingleValueToSheet(sheetName, value) {
+  
+  // Set up the spreadsheet
+  // Probably figure out a way to streamline this with other areas where this occurs.
+  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
+  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
+  
+  // Configure necessary varaibles
+  let sheet = ss.getSheetByName(sheetName);
+  let lastRow = sheet.getLastRow();
+  let insertRow = lastRow + 1;
+  let insertColumn = 1;
+  
+  // Add the value to the appropriate sheet
+  sheet.getRange(insertRow, insertColumn).setValue(value);
+  Logger.log("Update sheet (" + sheetName + ") to include value (" + value + ")");
+  
+}
 /*
 
 TODOs
