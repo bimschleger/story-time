@@ -38,53 +38,65 @@ function getStoryPhrases() {
   // Get range of all phrases
   let allPhrases = sheet.getRange(firstRow, firstColumn, numRows, numColumns).getValues();
   Logger.log("Got all the phrases");
-  
-//  // Get starter phrase
-//  let starterPhrase = getStarterPhrase(allPhrases);
-//  story.phrases.push(starterPhrase);
-//  Logger.log("Added '" + starterPhrase.phrase + "' to the overall list");
 
   let finalPhrase = false;
   let i = 0;
+  var phrase;
   
   // Loop to collect all phrases
   while (finalPhrase === false) {
     
+    // Get the initial phrase, with the starter value of 1
     if (i === 0) {
-      
-      // Get the initial phrase, with the starter value of 1
+        
       let starterPhrases = allPhrases.filter((row) => row[2] === 1);
       let index = Math.floor(Math.random()*(starterPhrases.length - 1));
-      var phrase = starterPhrases[index];
+      phrase = starterPhrases[index];
+      
       Logger.log("Got a starter phrase: '" + phrase[1] + "'");
-      finalPhrase = true;
+      i += 1;
       
     } 
+    // Get any non-starter phrase
     else {
-    
-      // Get any non-starter phrase
+      
+      
       let lastPhraseLeadsTo = story.phrases[story.phrases.length - 1].leadsTo;
+      Logger.log(lastPhraseLeadsTo);
+      Logger.log("^^^Got leadsTo values");
+      
       let index = Math.floor(Math.random()*(lastPhraseLeadsTo.length - 1));
       let phraseId = lastPhraseLeadsTo[index];
-      var phrase = allPhrases.filter((row) => row[0] === phraseId);
-      Logger.log("Got a non-starter phrase: '" + phrase[1] + "'");
-      
+      Logger.log("Got phrase id: " + phraseId);
+
+      // All phrases are in a big 2D array.
+      // When I filter, the system returns an array that contains the only array that meets the criteria
+      // [[my array]]
+      phrase = allPhrases.filter((row) => row[0] === phraseId);
+      phrase = phrase[0];
       
     }
     
     // Add the most recent phrase to the story object
     let phraseToAdd = newPhrase(phrase);
+    
+    // Add new phrase to story object
     story.phrases.push(phraseToAdd);
     Logger.log("Added to the story object the phrase: '" + phraseToAdd.phrase + "'");
 
     // Break the loop if the most recent phrase does not have values for leadsTo
-    if (phraseToAdd.leadsTo === []) {
-       Logger.log("Broke the loop");
+    if (phraseToAdd.leadsTo === null) {
+      Logger.log("Broke the loop");
       finalPhrase = true;
     }
     i += 1;
     
   }
+  
+  // Test to compile all the phrases in a log
+  story.phrases.forEach(function (phrase) {
+    Logger.log(phrase.phrase);
+  });
 }
 
 
