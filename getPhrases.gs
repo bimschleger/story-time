@@ -95,6 +95,9 @@ function getStoryPhrases() {
   // Compile all phrases into raw mwssage.
   story.message.raw = compileRawMessage(story.phrases);
   
+  // Create the compiled message that will get regex'd later on
+  story.message.compiled = compileRawMessage(story.phrases);
+  
 }
 
 

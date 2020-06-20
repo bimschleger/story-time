@@ -10,7 +10,7 @@ function doGet() {
   
   // Create story object
   let emptyStory = newStory();
-  Logger.log("Created empty story object");
+  Logger.log("Created an empty story object");
   
   // Add values for each key with a null value
   let story = setNullStory(emptyStory);
