@@ -9,18 +9,18 @@ Immediately returns a story with variables from the spreadsheet.
 function doGet() {
   
   // Create storyparts object
-  let emptyStoryParts = createEmptyStoryParts();
+  let emptyStory = createEmptyStory();
   Logger.log("Created emptyStoryParts object");
   
   // Add values for each key with a null value
-  let storyParts = setNullStoryParts(emptyStoryParts);
-  Logger.log(storyParts);
+  let story = setNullStoryParts(emptyStory);
+  Logger.log(story);
   
   // Compile story into one string
-  let storyObject = compileStory(storyParts);
-  Logger.log("message: " + storyObject.story)
+  story.message = compileStory(story);
+  Logger.log("message: " + story.message)
 
-  return ContentService.createTextOutput(JSON.stringify(storyObject)).setMimeType(ContentService.MimeType.JSON);   
+  return ContentService.createTextOutput(JSON.stringify(story)).setMimeType(ContentService.MimeType.JSON);   
 }
 
 
@@ -38,7 +38,7 @@ function doPost(e) {
   Logger.log("Post received");
   
   // Create empty storyParts object
-  let emptyStoryParts = createEmptyStoryParts();
+  let emptyStory = createEmptyStoryParts();
   
   // Get POST values
   let request = JSON.parse(e.postData.contents);
@@ -48,17 +48,17 @@ function doPost(e) {
   addUserInputsToSheet(request);
   
   // Merge user request into emptyStoryParts
-  let storyParts = Object.assign(emptyStoryParts, request);
+  let story = Object.assign(emptyStory, request);
   
   // Determine values for each key with a null value
-  storyParts = setNullStoryParts(storyParts)
+  story = setNullStoryParts(story)
   Logger.log("All keys have non-null values.");
   
   // Compile story into one string
-  let storyObject = compileStory(storyParts);
-  Logger.log("Message: " + storyObject.story);
+  story.message = compileStory(story);
+  Logger.log("Message: " + story.message);
   
-  return ContentService.createTextOutput(JSON.stringify(storyObject)).setMimeType(ContentService.MimeType.JSON);    
+  return ContentService.createTextOutput(JSON.stringify(story)).setMimeType(ContentService.MimeType.JSON);    
 }
 
 
@@ -72,16 +72,18 @@ Creates the blank story object for use in both doGet and doPost.
 
 function createEmptyStoryParts() {
   
-  let storyParts = {
-    "name1": null,
-    "job1": null,
-    "food1": null,
-    "phrase1": null,
-    "phrase2": null,
-    "phrase3": null
+  let story = {
+    "date": null,
+    "names": [],
+    "jobs": [],
+    "foods": [],
+    "phrases": [],
+    "adjectives": [],
+    "message": null,
+    "rating": null
   };
   
-  return storyParts;
+  return story;
 }
 
 
@@ -183,8 +185,13 @@ Send an email notification whenever new content is added to the spreadsheet.
 
 */
 
-function sendEmailNotification() {
-  //stuff
+function sendEmailNotification(storyParts, message) {
+  
+  
+  
+  let recipient = "brian@bimschleger.com";
+  
+  let subject = "New story time: ";
 }
 
 
