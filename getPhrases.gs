@@ -6,27 +6,20 @@ Gets all sequential story phrases based on the leadsTo field in 'phrases'
 
 */
 
-function getStoryPhrases(story) {
+function getStoryPhrases() {
   
-  // let phraseStarterIds = getStarterIds();
-  // let phraseStarter = getRandomPhrase(phraseStarterIds);
-  // story.phrases.push(phraseStarter)
-  //nextPhraseId = 
-  //while story.phrases[story.phrases.length - 1] != []latest_phrase.leadsTo != []
+  let story = {
+    "date": null,
+    "names": [],
+    "jobs": [],
+    "foods": [],
+    "phrases": [],
+    "adjectives": [],
+    "message": null,
+    "rating": null
+  };
   
-}
-
-
-/* 
-
-Gets all of the phrases that can kickoff the sequences
-
-@return starterIds {array} array of all of the ids of phrases that kickoff the sequence.
-
-*/
-
-function getStarterId() {
-  
+  // Set up spreadsheet access
   let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
   let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
   let sheetName = "phrases";
@@ -44,19 +37,75 @@ function getStarterId() {
   
   // Get range of all phrases
   let allPhrases = sheet.getRange(firstRow, firstColumn, numRows, numColumns).getValues();
+  Logger.log("Got all the phrases");
+  
+//  // Get starter phrase
+//  let starterPhrase = getStarterPhrase(allPhrases);
+//  story.phrases.push(starterPhrase);
+//  Logger.log("Added '" + starterPhrase.phrase + "' to the overall list");
+
+  let finalPhrase = false;
+  let i = 0;
+  
+  // Loop to collect all phrases
+  while (finalPhrase === false) {
+    
+    if (i === 0) {
+      
+      // Get the initial phrase, with the starter value of 1
+      let starterPhrases = allPhrases.filter((row) => row[2] === 1);
+      let index = Math.floor(Math.random()*(starterPhrases.length - 1));
+      var phrase = starterPhrases[index];
+      Logger.log("Got a starter phrase: '" + phrase[1] + "'");
+      finalPhrase = true;
+      
+    } 
+    else {
+    
+      // Get any non-starter phrase
+      let lastPhraseLeadsTo = story.phrases[story.phrases.length - 1].leadsTo;
+      let index = Math.floor(Math.random()*(lastPhraseLeadsTo.length - 1));
+      let phraseId = lastPhraseLeadsTo[index];
+      var phrase = allPhrases.filter((row) => row[0] === phraseId);
+      Logger.log("Got a non-starter phrase: '" + phrase[1] + "'");
+      
+      
+    }
+    
+    // Add the most recent phrase to the story object
+    let phraseToAdd = newPhrase(phrase);
+    story.phrases.push(phraseToAdd);
+    Logger.log("Added to the story object the phrase: '" + phraseToAdd.phrase + "'");
+
+    // Break the loop if the most recent phrase does not have values for leadsTo
+    if (phraseToAdd.leadsTo === []) {
+       Logger.log("Broke the loop");
+      finalPhrase = true;
+    }
+    i += 1;
+    
+  }
+}
+
+
+/* 
+
+Gets all of the phrases that can kickoff the sequences
+
+@param allPhrases {array} two dimensional array of all phrases and their parts
+@return starterIds {array} array of all of the ids of phrases that kickoff the sequence.
+
+*/
+
+function getStarterPhrase(allPhrases) {
   
   let starterPhrases = allPhrases.filter((row) => row[2] === 1);
   
-  Logger.log("Filtered phrasese are: " + starterPhrases);
-  
-  // Get the id from each starter phrase
+  // Get a random index to grab a phrase array.
   let index = Math.floor(Math.random()*(starterPhrases.length - 1));
-  let id = starterPhrases[index][0];
+  let starterPhraseObject = newPhrase(starterPhrases[index]);
   
-  Logger.log("starter id is: " + id);
-  
-  
-  //return filteredPhrases;
+  return starterPhraseObject;
   
 }
 

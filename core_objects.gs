@@ -27,22 +27,54 @@ function newStory() {
 
 New object for a phrase
 
+@param phraseArray {array} array of id, phrase, starter, and leadsTo values
 @return phrase {object} Contains id, phrase, starter, and leadsTo for a specific prhase
 
 */
 
 function newPhrase() {
   
-  let phrase = {
-    "id": null,
-    "phrase": null,
-    "starter": null,
-    "leadsTo": []
+  phraseArray = [1,"This is a story about XNAME1",1,"5,6,7,8,9,10"];
+  
+  // Map the array variables
+  let id = phraseArray[0];
+  let phrase = phraseArray[1];
+  let starter = phraseArray[2];
+  let leadsTo = convertLeadsToStringToArray(phraseArray[3]);
+  
+  // Define my phraseObject
+  let phraseObject = {
+    "id": id,
+    "phrase": phrase,
+    "starter": starter,
+    "leadsTo": leadsTo
   }
   
-  return phrase;
+  Logger.log(phraseObject);
+  
+  return phraseObject;
 }
 
+
+/*
+
+Converts the leadsTo string into an array of integers
+
+@param leadsToString {string} a string of comma-separated ids
+@return leadsToArray {array} an array of integer ids
+
+*/
+
+function convertLeadsToStringToArray(leadsToString) {
+  
+  let leadsToValues = leadsToString.split(",");
+  let leadsToArray = leadsToValues.map(function (value, index, array) {
+    return parseInt(value); 
+  });
+  
+  return leadsToArray; 
+}
+  
   
 /*
 
