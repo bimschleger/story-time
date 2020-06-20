@@ -8,6 +8,10 @@ Gets all sequential story phrases based on the leadsTo field in 'phrases'
 
 function getStoryPhrases() {
   
+  // TODO: remove sample story
+  // TODO: update parameter to be story
+  // TODO: add getStoryPhrases() into doGet() and doPost()
+  
   let story = {
     "date": null,
     "names": [],
