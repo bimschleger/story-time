@@ -58,7 +58,7 @@ function getStoryPhrases() {
     
     else {    // Get any non-starter phrase
       
-      let index = Math.floor(Math.random()*(recentPhrase.leadsTo.length - 1));    // lastPhraseLeadsTo is defined after the system adds the objec to story
+      let index = Math.floor(Math.random()*(recentPhrase.leadsTo.length - 1));    // Gets the phrase ids for phrases that follow the previous phrase
       let phraseId = recentPhrase.leadsTo[index];
       Logger.log("Got phrase id: " + phraseId);
 
