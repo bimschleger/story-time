@@ -15,7 +15,10 @@ function newStory() {
     "foods": [],
     "phrases": [],
     "adjectives": [],
-    "message": null,
+    "message": {
+      "raw": null,
+      "compiled": null
+    },
     "rating": null
   };
   

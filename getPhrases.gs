@@ -1,9 +1,11 @@
 /*
+*
 
 Gets all sequential story phrases based on the leadsTo field in 'phrases'
 
 @return phrases {array} array of phrase objects that work sequentially together
 
+*
 */
 
 function getStoryPhrases() {
@@ -19,7 +21,10 @@ function getStoryPhrases() {
     "foods": [],
     "phrases": [],
     "adjectives": [],
-    "message": null,
+    "message": {
+      "raw": null,
+      "compiled": null
+    },
     "rating": null
   };
   
@@ -45,7 +50,7 @@ function getStoryPhrases() {
   // Loop to collect all phrases
   while (finalPhrase === false) {
     
-    if (i === 0) {    // Get the initial phrase, with the 'starter' value of 1
+    if (loopCounter === 0) {    // Get the initial phrase, with the 'starter' value of 1
       
       let starterPhrases = allPhrases.filter((row) => row[2] === 1);
       let index = Math.floor(Math.random()*(starterPhrases.length - 1));
@@ -75,33 +80,33 @@ function getStoryPhrases() {
     
     // Add new phrase to story object
     story.phrases.push(recentPhrase);
-    Logger.log("Added to the story object the phrase: '" + recentPhrase.phrase + "'");
+    Logger.log("Added the phrase: '" + recentPhrase.phrase + "'  to the 'story' object.");
 
     // Break the loop if the most recent phrase does not have values for leadsTo
     if (recentPhrase.leadsTo === null) {
       
-      Logger.log("Broke the loop");
+      Logger.log("Exited the 'while' the loop");
       finalPhrase = true;
       
     } 
     loopCounter += 1;
-    
   }
   
-  // Test to compile all the phrases in a log
-  story.phrases.forEach(function (phrase) {
-    Logger.log(phrase.phrase);
-  });
+  // Compile all phrases into raw mwssage.
+  story.message.raw = compileRawMessage(story.phrases);
+  
 }
 
 
 /*
+*
 
 Converts the leadsTo string into an array of integers
 
 @param leadsToString {string} a string of comma-separated ids
 @return leadsTo {array} an array of integer ids
 
+*
 */
 
 function convertLeadsToStringToArray(leadsToString) {
@@ -124,4 +129,25 @@ function convertLeadsToStringToArray(leadsToString) {
   }
   
   return leadsTo; 
+}
+
+
+/* 
+ *
+ Compile the story from all the phrases into one raw string.
+
+ @param phrases {array} an array of phrase objects.
+ @return message_raw {string} Since string that joins all the phrases together.
+
+ *
+ */
+
+function compileRawMessage(phrases) {
+  
+  let rawPhrases = phrases.map(phraseObject => phraseObject.phrase);
+  
+  let rawMessage = rawPhrases.join(". ");
+  Logger.log("Raw message is: " + rawMessage);
+  
+  return rawMessage;
 }
