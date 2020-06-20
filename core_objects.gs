@@ -27,14 +27,12 @@ function newStory() {
 
 New object for a phrase
 
-@param phraseArray {array} array of id, phrase, starter, and leadsTo values
+@param phraseArray {array} array of [1,"This is a story about XNAME1",1,"5,6,7,8,9,10"]
 @return phrase {object} Contains id, phrase, starter, and leadsTo for a specific prhase
 
 */
 
 function newPhrase(phraseArray) {
-  
-  // phraseArray = [1,"This is a story about XNAME1",1,"5,6,7,8,9,10"];
   
   // Map the array variables
   let id = phraseArray[0];
@@ -51,38 +49,6 @@ function newPhrase(phraseArray) {
   }
   
   return phraseObject;
-}
-
-
-/*
-
-Converts the leadsTo string into an array of integers
-
-@param leadsToString {string} a string of comma-separated ids
-@return leadsTo {array} an array of integer ids
-
-*/
-
-function convertLeadsToStringToArray(leadsToString) {
-  
-  var leadsTo;
-  
-  // If the phrase does not have a vlaue in the leadsToString, leadsTo as null
-  // Final phrases not not have values in leadsTo column
-  if (leadsToString.length > 0) {
-    
-    let leadsToValues = leadsToString.split(",");
-    leadsTo = leadsToValues.map(function (value, index, array) {
-      return parseInt(value); 
-    });
-    
-  }
-  else {
-    // If there is no destination for the phrase, mark it as null.
-    leadsTo = null;
-  }
-  
-  return leadsTo; 
 }
   
   
@@ -103,6 +69,7 @@ function newCore() {
     
   return core;
 }
+
 
 /*
 
