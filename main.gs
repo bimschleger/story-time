@@ -8,12 +8,12 @@ Immediately returns a story with variables from the spreadsheet.
 
 function doGet() {
   
-  // Create storyparts object
-  let emptyStory = createEmptyStory();
-  Logger.log("Created emptyStoryParts object");
+  // Create story object
+  let emptyStory = newStory();
+  Logger.log("Created empty story object");
   
   // Add values for each key with a null value
-  let story = setNullStoryParts(emptyStory);
+  let story = setNullStory(emptyStory);
   Logger.log(story);
   
   // Compile story into one string
@@ -37,8 +37,8 @@ function doPost(e) {
   
   Logger.log("Post received");
   
-  // Create empty storyParts object
-  let emptyStory = createEmptyStoryParts();
+  // Create empty story object
+  let emptyStory = newStory();
   
   // Get POST values
   let request = JSON.parse(e.postData.contents);
@@ -47,11 +47,11 @@ function doPost(e) {
   // Add user inputs to the spreadsheet
   addUserInputsToSheet(request);
   
-  // Merge user request into emptyStoryParts
+  // Merge user request into emptystory
   let story = Object.assign(emptyStory, request);
   
   // Determine values for each key with a null value
-  story = setNullStoryParts(story)
+  story = setNullStory(story)
   Logger.log("All keys have non-null values.");
   
   // Compile story into one string
@@ -66,11 +66,11 @@ function doPost(e) {
 
 Creates the blank story object for use in both doGet and doPost.
 
-@return storyParts {object} an object containing null values for each of the required story keys.
+@return story {object} an object containing null values for each of the required story keys.
 
 */
 
-function createEmptyStoryParts() {
+function newStory() {
   
   let story = {
     "date": null,
@@ -86,28 +86,27 @@ function createEmptyStoryParts() {
   return story;
 }
 
-
 /*
 
 Finds all null fields, and sets the random value to them.
 
-@param storyParts {object} Usually a storyParts object with several null keys.
-@return storyParts {object} The same object returned with a value for each key
+@param story {object} Usually a story object with several null keys.
+@return story {object} The same object returned with a value for each key
 
 */
 
-function setNullStoryParts(storyParts) {
+function setNullStory(story) {
   
   // Get a random value for each key that is null
-  for (let [key, value] of Object.entries(storyParts)) {
+  for (let [key, value] of Object.entries(story)) {
     if (value === null) {
       let randomValue = getRandomValueFromSheet(key);
-      storyParts[key] = randomValue;
+      story[key] = randomValue;
       Logger.log("Set key (" + key + ") to " + randomValue);
     }
   };
   
-  return storyParts;
+  return story;
 }
 
 
@@ -152,18 +151,18 @@ function getRandomValueFromSheet(sheetName) {
 
 Takes parts of a story and concatenates them into asingle string.
 
-@param storyParts {object} Collection of variables and phrases that comprise the story
+@param story {object} Collection of variables and phrases that comprise the story
 @return storyObject {object} Concatenated story
 
 */
 
-function compileStory(storyParts) {
-  let phrase1 = storyParts.phrase1;
-  let name1 = storyParts.name1;
-  let phrase2 = storyParts.phrase2;
-  let job1 = storyParts.job1;
-  let phrase3 = storyParts.phrase3;
-  let food1 = storyParts.food1;
+function compileStory(story) {
+  let phrase1 = story.phrase1;
+  let name1 = story.name1;
+  let phrase2 = story.phrase2;
+  let job1 = story.job1;
+  let phrase3 = story.phrase3;
+  let food1 = story.food1;
   
   let message1 = phrase1 + name1 + ". ";
   let message2 = name1 + " " + phrase2 + " " + job1 + ". ";
@@ -185,7 +184,7 @@ Send an email notification whenever new content is added to the spreadsheet.
 
 */
 
-function sendEmailNotification(storyParts, message) {
+function sendEmailNotification(story, message) {
   
   
   
@@ -243,6 +242,7 @@ function addSingleValueToSheet(sheetName, value) {
   Logger.log("Update sheet (" + sheetName + ") to include value (" + value + ")");
   
 }
+
 /*
 
 TODOs
