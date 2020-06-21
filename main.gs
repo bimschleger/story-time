@@ -119,12 +119,7 @@ function setNullStory(story) {
 
 function getRandomValueFromSheet(sheetName) {
   
-  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
-  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
-  
-  // Access specific spreadsheet by name
-  let sheet = ss.getSheetByName(sheetName);
-  Logger.log("Got sheet (" + sheetName + ")");
+  sheet = getSheetData(sheetName);
   
   // Prepare variables necessary for getting values
   let rowsMax = sheet.getLastRow();
@@ -241,6 +236,26 @@ function addSingleValueToSheet(sheetName, value) {
   sheet.getRange(insertRow, insertColumn).setValue(value);
   Logger.log("Update sheet (" + sheetName + ") to include value (" + value + ")");
   
+}
+
+
+/* 
+
+Connect to a specific spreadsheet.
+
+@param sheetName {string} the name of the sheet to connect to
+@return {object} returns the sheet object with all the data
+
+*/
+
+function getSheetData(sheetName) {
+  
+  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
+  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
+  let sheet = ss.getSheetByName(sheetName);
+  Logger.log("Got sheet (" + sheetName + ")");
+  
+  return sheet;
 }
 
 /*
