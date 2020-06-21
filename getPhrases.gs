@@ -14,20 +14,8 @@ function getStoryPhrases() {
   // TODO: update parameter to be story
   // TODO: add getStoryPhrases() into doGet() and doPost()
   
-  let story = {
-    "date": null,
-    "names": [],
-    "jobs": [],
-    "foods": [],
-    "phrases": [],
-    "adjectives": [],
-    "message": {
-      "raw": null,
-      "compiled": null
-    },
-    "rating": null
-  };
-  
+  let sheetName = "phrases";
+  let story = newStory();
   let sheet = getSheetData(sheetName);
   
   // Setup range to pull

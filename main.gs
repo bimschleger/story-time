@@ -64,30 +64,6 @@ function doPost(e) {
 
 /*
 
-Creates the blank story object for use in both doGet and doPost.
-
-@return story {object} an object containing null values for each of the required story keys.
-
-*/
-
-function newStory() {
-  
-  let story = {
-    "date": null,
-    "names": [],
-    "jobs": [],
-    "foods": [],
-    "phrases": [],
-    "adjectives": [],
-    "message": null,
-    "rating": null
-  };
-  
-  return story;
-}
-
-/*
-
 Finds all null fields, and sets the random value to them.
 
 @param story {object} Usually a story object with several null keys.
@@ -129,7 +105,6 @@ function getRandomValueFromSheet(sheet) {
   
   // Get value from the sheet
   let values = sheet.getRange(startingRow, startingColumn, numRows, numColumns).getValues();
-  sheet.getrange
   Logger.log("Got values: " + values);
   
   // Select single value from data
@@ -222,20 +197,27 @@ Add a single value to a particular spreadsheet.
 
 */
 
-function addSingleValueToSheet(sheetObject, value) {
+function addNewValueToSheet(sheet, value) {
   
-  let lastRow = sheetObject.getLastRow();
+  Logger.log("Started 'addNewValueToSheet'.");
+  
+  let lastRow = sheet.getLastRow();
   let insertRow = lastRow + 1;
   let insertColumn = 1;
+  let numRows = 1;
+  let numColumns = 2;
+  
+  // 2D array to use within .setValues
+  let rowData = [[lastRow, value]];
   
   // Add the value to the appropriate sheet
-  sheetObject.getRange(insertRow, insertColumn).setValue(value);
+  sheet.getRange(insertRow, insertColumn, numRows, numColumns).setValues(rowData);
   
   let coreObject = newCore();
   coreObject.id = lastRow;
   coreObject.name = value;
   
-  Logger.log("Inserted the value " + value + "'");
+  Logger.log("Inserted the value '" + value + "'.");
   
   return coreObject;
   

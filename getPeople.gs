@@ -11,7 +11,7 @@ Get all of the person objects that we need for the story.
 *
 */
 
-function getCoreObject(userInput = null) { //add in (story, sheetName, userInput)
+function getCoreObject(userInput = "Pluto") { //add in (story, sheetName, userInput)
   
   let sheetName = "names";
   let story = {
@@ -33,10 +33,10 @@ function getCoreObject(userInput = null) { //add in (story, sheetName, userInput
   var value;
   
   if (userInput != null) { // If there is a user input, check to see if the input exists
-    value = getExistingValue(sheet, userInput); //if the value exists, generate an object from it
+    value = getSpecificValueFromSheet(sheet, userInput); //if the value exists, generate an object from it
     
-    if (typeof value != "object") {  // if the value does not exist, add teh value to the sheet and make an object from it
-      value = addSingleValueToSheet(sheet, userInput)
+    if (typeof value === "undefined") {  // if the value does not exist, add teh value to the sheet and make an object from it
+      value = addNewValueToSheet(sheet, userInput)
     }  
     
   } else {
@@ -64,18 +64,27 @@ Get the object for an existing value in the spreadsheet
 *
 */
 
-function getExistingValue(sheetName, value) {
-  // get array of all values 
+function getSpecificValueFromSheet(sheet, value) {
   
-  if (value) {
-    //look into sheetname, filter values by row[1] === value
-    // if ==1, row = [row]
-    // row = newCore(row)
-    // if none, row = false
-  } else {
-    
-    // return row
-  }
+  Logger.log("Started 'getSpecificValueFromSheet()'");
+  
+  // Prepare variables necessary for getting values
+  let rowsMax = sheet.getLastRow();
+  let numRows = rowsMax -1;
+  let startingRow = 2;
+  let startingColumn = 1;
+  let numColumns = 2
+  
+  // Get value from the sheet
+  let values = sheet.getRange(startingRow, startingColumn, numRows, numColumns).getValues();
+  let matchingArray = values.filter(row => row[1] === value);  // generates a 2D array of rows
+  Logger.log("matches with values: " + matchingArray);
+  
+  // Get the one matching array  the filtered data.
+  let matchingValue = matchingArray[0];
+  Logger.log("Got value: " + matchingValue);
+  
+  return matchingValue;
 }
 
 
