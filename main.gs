@@ -117,26 +117,29 @@ function setNullStory(story) {
 
 */
 
-function getRandomValueFromSheet(sheetName) {
-  
-  sheet = getSheetData(sheetName);
+function getRandomValueFromSheet(sheet) {
+  Logger.log("Started 'getRandomValueFromSheet'");
   
   // Prepare variables necessary for getting values
   let rowsMax = sheet.getLastRow();
-  let rowsData = rowsMax -1;
+  let numRows = rowsMax -1;
   let startingRow = 2;
   let startingColumn = 1;
+  let numColumns = 2
   
   // Get value from the sheet
-  let values = sheet.getRange(startingRow, startingColumn, rowsData).getValues();
+  let values = sheet.getRange(startingRow, startingColumn, numRows, numColumns).getValues();
+  sheet.getrange
+  Logger.log("Got values: " + values);
   
   // Select single value from data
-  let index = Math.floor(Math.random() * rowsData);
+  let index = Math.floor(Math.random() * numRows);
+  Logger.log("Got random index");
   
   // .getValues is a little funky, returns a 2D array. 
   // Must specify desired row and column, even if only one column.
-  let value = values[index][0];
-  Logger.log(sheetName + " value = " + value);
+  let value = values[index][1];
+  Logger.log("Got '" + value + "' value" );
   
   return value;
 }
@@ -219,22 +222,22 @@ Add a single value to a particular spreadsheet.
 
 */
 
-function addSingleValueToSheet(sheetName, value) {
+function addSingleValueToSheet(sheetObject, value) {
   
-  // Set up the spreadsheet
-  // Probably figure out a way to streamline this with other areas where this occurs.
-  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
-  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
-  
-  // Configure necessary varaibles
-  let sheet = ss.getSheetByName(sheetName);
-  let lastRow = sheet.getLastRow();
+  let lastRow = sheetObject.getLastRow();
   let insertRow = lastRow + 1;
   let insertColumn = 1;
   
   // Add the value to the appropriate sheet
-  sheet.getRange(insertRow, insertColumn).setValue(value);
-  Logger.log("Update sheet (" + sheetName + ") to include value (" + value + ")");
+  sheetObject.getRange(insertRow, insertColumn).setValue(value);
+  
+  let coreObject = newCore();
+  coreObject.id = lastRow;
+  coreObject.name = value;
+  
+  Logger.log("Inserted the value " + value + "'");
+  
+  return coreObject;
   
 }
 

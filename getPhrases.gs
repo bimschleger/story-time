@@ -28,11 +28,7 @@ function getStoryPhrases() {
     "rating": null
   };
   
-  // Set up spreadsheet access
-  let spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1vtmWWWKqrJm7NtScJPuj-iCld9i3ls3SsCfQDJpPcfY/edit?usp=sharing';
-  let ss = SpreadsheetApp.openByUrl(spreadsheetUrl);
-  let sheetName = "phrases";
-  let sheet = ss.getSheetByName(sheetName);
+  let sheet = getSheetData(sheetName);
   
   // Setup range to pull
   let firstRow = 2;
