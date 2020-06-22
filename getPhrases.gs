@@ -27,7 +27,7 @@ function getStoryPhrases() {
   
   // Set up variables for the while loop
   let allPhrases = sheet.getRange(firstRow, firstColumn, numRows, numColumns).getValues();    // Get range of all phrases
-  let finalPhrase = false;    // Use this to end the while loop if the leadsTo for a phrase is null.
+  let finalPhrase = false;              // Use this to end the while loop if the leadsTo for a phrase is null.
   let loopCounter = 0;                  // Use this to get starter sentences in the while loop.
   var phrase;
   
@@ -40,7 +40,7 @@ function getStoryPhrases() {
       let index = Math.floor(Math.random()*(starterPhrases.length - 1));
       
       phrase = starterPhrases[index];
-      Logger.log("Got a starter phrase: '" + phrase[1] + "'");
+      Logger.log("Got a starter phrase: '" + phrase + "'");
       loopCounter += 1;
       
     } 
@@ -56,6 +56,7 @@ function getStoryPhrases() {
       // [[my array]]
       phrase = allPhrases.filter((row) => row[0] === phraseId);
       phrase = phrase[0];
+      Logger.log("Got phraseid: (" + phrase[0]);
       
     }
     
@@ -75,6 +76,7 @@ function getStoryPhrases() {
     } 
     loopCounter += 1;
   }
+  Logger.log("Updated story object: '" + JSON.stringify(story) + "'");
   
   // Compile all phrases into raw mwssage.
   story.message.raw = compileRawMessage(story.phrases);
@@ -82,40 +84,6 @@ function getStoryPhrases() {
   // Create the compiled message that will get regex'd later on
   story.message.compiled = compileRawMessage(story.phrases);
   
-}
-
-
-/*
-*
-
-Converts the leadsTo string into an array of integers
-
-@param leadsToString {string} a string of comma-separated ids
-@return leadsTo {array} an array of integer ids
-
-*
-*/
-
-function convertLeadsToStringToArray(leadsToString) {
-  
-  var leadsTo;
-  
-  // If the phrase does not have a vlaue in the leadsToString, leadsTo as null
-  // Final phrases not not have values in leadsTo column
-  if (leadsToString.length > 0) {
-    
-    let leadsToValues = leadsToString.split(",");
-    leadsTo = leadsToValues.map(function (value, index, array) {
-      return parseInt(value); 
-    });
-    
-  }
-  else {
-    // If there is no destination for the phrase, mark it as null.
-    leadsTo = null;
-  }
-  
-  return leadsTo; 
 }
 
 

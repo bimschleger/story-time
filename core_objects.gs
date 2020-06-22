@@ -1,9 +1,11 @@
 /*
+*
 
 Creates the blank story object for use in both doGet and doPost.
 
 @return story {object} an object containing null values for each of the required story keys.
 
+*
 */
 
 function newStory() {
@@ -27,12 +29,14 @@ function newStory() {
 
 
 /*
+*
 
 New object for a phrase
 
 @param phraseArray {array} array of [1,"This is a story about XNAME1",1,"5,6,7,8,9,10"]
 @return phrase {object} Contains id, phrase, starter, and leadsTo for a specific prhase
 
+*
 */
 
 function newPhrase(phraseArray) {
@@ -53,21 +57,63 @@ function newPhrase(phraseArray) {
   
   return phraseObject;
 }
+
+
+/*
+*
+
+Converts the leadsTo string into an array of integers
+
+@param leadsToString {string} a string of comma-separated ids
+@return leadsTo {array} an array of integer ids
+
+*
+*/
+
+function convertLeadsToStringToArray(leadsToString) {
+  
+  var leadsTo;
+  
+  // If the phrase does not have a vlaue in the leadsToString, leadsTo as null
+  // Final phrases not not have values in leadsTo column
+  
+  // todo: be able to handle integers forsingle value leadsTo
+  
+  if (leadsToString.length > 0) {
+    if (typeof leadsToString === "number") {
+      leadsTo = [leadsToString];
+    } 
+    else {
+      let leadsToValues = leadsToString.split(",");
+      leadsTo = leadsToValues.map(function (value, index, array) {
+        return parseInt(value); 
+      });
+    }
+  }
+  else {
+    // If there is no destination for the phrase, mark it as null.
+    leadsTo = null;
+  }
+  
+  return leadsTo; 
+}
   
   
 /*
+*
 
 Creates empty core object
 
 @return name {object} an object containing null values for each of the required name keys.
 
+*
 */
 
-function newCore() {
+function newCore(id, name) {
   
   let core = {
-    "id": null,
-    "name": null
+    "id": id,
+    "name": name
   };
     
   return core;
