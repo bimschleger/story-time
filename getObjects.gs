@@ -171,26 +171,47 @@ Get an array of the unique xVariables in use within story.message.raw
 
 function getUniqueXVariableArray(rawMessage = null, xVariableRegex  = null) {
   
-  let xVariableName = /xName[1-9]{1,2}/g;
-  let xVariableFood = /xFood[1-9]{1,2}/g;
-  let xVariableJob = /xJob[1-9]{1,2}/g;
-  let xVariableAdj = /xAdj[1-9]{1,2}/g;
- 
-  // TODO: Remove when this goes live
-  rawMessage = "This is a story about xName1. xName1 is good at xJob1. xName1 can dunk.. xName2 once ate a xFood1 on the court.. xName3 is the first test in a long story";
-  let matchArray = rawMessage.match(xVariableFood);
-  Logger.log(matchArray);
-  
-  let uniques = [];
-    
-  for (let i of matchArray) {
-    if (uniques.indexOf(i) === -1) {
-      uniques.push(i)
-      Logger.log("Added '" + i + "' to uniques.");
+  var xVariableObject = {
+    "xVariableName": {
+      "regex": /xName[1-9]{1,2}/g,
+      "uniques": []
+    },
+    "xVariableFood": {
+      "regex": /xFood[1-9]{1,2}/g,
+      "uniques": []
+    },
+    "xVariableJob": {
+      "regex": /xJob[1-9]{1,2}/g,
+      "uniques": []
+    },
+    "xVariableAdj": {
+      "regex": /xAdj[1-9]{1,2}/g,
+      "uniques": []
     }
   }
-  Logger.log("Uniques: " + uniques);
-};
+ 
+  // TODO: Remove when this goes live
+  rawMessage = "This is a story about xName1. xName1 is good at xJob1. xName1 can dunk. xName2 once ate a xFood1 on the court. xName3 is the first test in a long story";
+  
+  Object.keys(xVariableObject).forEach(function (key) {  
+    let matchKeyArray = rawMessage.match(xVariableObject[key].regex);
+    Logger.log("All results for '" + key + "': " + matchKeyArray);
+    
+    let uniques = [];
+    
+    if (matchKeyArray != null) {  // Prevents an error for null values, like xVariableAdj which I have not implemented yet.
+      for (var i of matchKeyArray) {
+        if (xVariableObject[key].uniques.indexOf(i) === -1) {
+          xVariableObject[key].uniques.push(i)
+          Logger.log("Added '" + i + "' to unique '" + key + "' values.");
+        }
+      }
+      Logger.log("Unique results for '" + key + "': " + xVariableObject[key].uniques);
+    }
+  });
+  Logger.log("Added all unique values to xVariableObject.");
+  
+}
 
 
 /*
