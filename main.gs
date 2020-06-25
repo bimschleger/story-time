@@ -8,17 +8,7 @@ Immediately returns a story with variables from the spreadsheet.
 
 function doGet() {
   
-  // Create story object
-  let emptyStory = newStory();
-  Logger.log("Created an empty story object");
-  
-  // Add values for each key with a null value
-  let story = setNullStory(emptyStory);
-  Logger.log(story);
-  
-  // Compile story into one string
-  story.message = compileStory(story);
-  Logger.log("message: " + story.message)
+  let story = buildStory();
 
   return ContentService.createTextOutput(JSON.stringify(story)).setMimeType(ContentService.MimeType.JSON);   
 }
@@ -106,8 +96,45 @@ function buildStory(userInputs = null) {
     }
   }
   
-  // Add in regex replace function here
-  Logger.log("Here is the final compiled story: " + JSON.stringify(story));
+  story.message.compiled = replaceXVariablesWithValues(story, xVariables);
+  Logger.log("Here is the final story: " + JSON.stringify(story));
+  
+  return story;
+}
+
+
+/*
+
+Replaces xVariables with the random or user-input variables.
+
+@param story {object} our main story object that contains the raw story, compiled story, and all true values.
+@param xVariables {object} contains the unique values that we will replace
+@return compiledStory {string} the final compiled story.
+
+*/
+
+function replaceXVariablesWithValues(story, xVariables) {
+  
+  var compiledStory = story.message.raw;
+  let xVariableKeys = Object.keys(xVariables);
+  Logger.log(JSON.stringify(story));
+  
+  xVariableKeys.forEach(function (key) {
+    var count = 0;
+    for (let i of xVariables[key].uniques) {
+      
+      let xVar = xVariables[key].uniques[count];
+      let value = story[key][count].name;
+      let regex = new RegExp(xVar,"g"); // a regex workaround, since .replaceAll does not exist and i need to use /stuff/g (g) to replace all vlaues.
+      
+      compiledStory = compiledStory.replace(regex, value);
+      Logger.log("Replaced '" + xVar + "' with '" + value + "'.");
+      count += 1;
+    }
+    
+  });
+  Logger.log("Here is the final compiled story: '" + compiledStory + "'.");
+  return compiledStory;
 }
 
 /*
