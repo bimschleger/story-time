@@ -84,6 +84,8 @@ function getStoryPhrases() {
   // Create the compiled message that will get regex'd later on
   story.message.compiled = compileRawMessage(story.phrases);
   
+  return story;
+  
 }
 
 

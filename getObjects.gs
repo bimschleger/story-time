@@ -11,7 +11,8 @@ Get all of the person objects that we need for the story.
 *
 */
 
-function getCoreObject(story = newStory(), sheetName = "foods", userInput = null) { //TODO: remove default values when ready to test.
+function getCoreObject(story, sheetName, userInput = null) { //TODO: remove default values when ready to test.
+  // getCoreObject(story = newStory(), sheetName = "foods", userInput = null)
   
   var sheet = getSheetData(sheetName);
   var value;
@@ -39,6 +40,7 @@ function getCoreObject(story = newStory(), sheetName = "foods", userInput = null
       // if (currentPeople.indexOf(randomId) === -1)
         // create newPerson object
         // story.people.push(newPersonObject)
+  return story;
 }
 
 
@@ -169,29 +171,29 @@ Get an array of the unique xVariables in use within story.message.raw
 *
 */
 
-function getUniqueXVariableArray(rawMessage = null, xVariableRegex  = null) {
+function getUniqueXVariables(rawMessage) { // rawMessage = null
   
   var xVariableObject = {
-    "xVariableName": {
+    "names": {
       "regex": /xName[1-9]{1,2}/g,
       "uniques": []
     },
-    "xVariableFood": {
+    "foods": {
       "regex": /xFood[1-9]{1,2}/g,
       "uniques": []
     },
-    "xVariableJob": {
+    "jobs": {
       "regex": /xJob[1-9]{1,2}/g,
       "uniques": []
     },
-    "xVariableAdj": {
+    "adjectives": {
       "regex": /xAdj[1-9]{1,2}/g,
       "uniques": []
     }
   }
  
   // TODO: Remove when this goes live
-  rawMessage = "This is a story about xName1. xName1 is good at xJob1. xName1 can dunk. xName2 once ate a xFood1 on the court. xName3 is the first test in a long story";
+  //rawMessage = "This is a story about xName1. xName1 is good at xJob1. xName1 can dunk. xName2 once ate a xFood1 on the court. xName3 is the first test in a long story";
   
   Object.keys(xVariableObject).forEach(function (key) {  
     let matchKeyArray = rawMessage.match(xVariableObject[key].regex);
@@ -211,6 +213,7 @@ function getUniqueXVariableArray(rawMessage = null, xVariableRegex  = null) {
   });
   Logger.log("Added all unique values to xVariableObject.");
   
+  return xVariableObject;
 }
 
 

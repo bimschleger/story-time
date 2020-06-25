@@ -81,6 +81,35 @@ function getSheetData(sheetName) {
   return sheet;
 }
 
+
+/*
+
+Build the core story object and fill all of the data.
+
+@param userInputs {object} whatever ther user posted into the system. Likely a name, job, food, and adjective.
+@return ??
+
+*/
+
+function buildStory(userInputs = null) {
+  
+  let story = getStoryPhrases();
+  let xVariables = getUniqueXVariables(story.message.raw);
+  let sheetNames = Object.keys(xVariables);
+  
+  for (let sheet of sheetNames) {
+    let count = 0;
+    
+    while (count < xVariables[sheet].uniques.length) {
+      story = getCoreObject(story, sheet);
+      count += 1;
+    }
+  }
+  
+  // Add in regex replace function here
+  Logger.log("Here is the final compiled story: " + JSON.stringify(story));
+}
+
 /*
 
 TODOs
