@@ -25,30 +25,10 @@ Accept the custom inputs from the user, return them in a story
 
 function doPost(e) {
   
-  Logger.log("Post received");
+  let response = newStory();
+  response.message.compiled = "We're not quite ready for you to tell a story. Stay tuned!";
   
-  // Create empty story object
-  let emptyStory = newStory();
-  
-  // Get POST values
-  let request = JSON.parse(e.postData.contents);
-  Logger.log("Post contents: " + JSON.stringify(request));
-  
-  // Add user inputs to the spreadsheet
-  addUserInputsToSheet(request);
-  
-  // Merge user request into emptystory
-  let story = Object.assign(emptyStory, request);
-  
-  // Determine values for each key with a null value
-  story = setNullStory(story)
-  Logger.log("All keys have non-null values.");
-  
-  // Compile story into one string
-  story.message = compileStory(story);
-  Logger.log("Message: " + story.message);
-  
-  return ContentService.createTextOutput(JSON.stringify(story)).setMimeType(ContentService.MimeType.JSON);    
+  return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);    
 }
 
 
