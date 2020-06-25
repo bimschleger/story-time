@@ -97,8 +97,8 @@ function replaceXVariablesWithValues(story, xVariables) {
   
   var compiledStory = story.message.raw;
   let xVariableKeys = Object.keys(xVariables);
-  Logger.log(JSON.stringify(story));
   
+  // Loop through each unique xVariable and replace it with the corresponding random value.
   xVariableKeys.forEach(function (key) {
     var count = 0;
     for (let i of xVariables[key].uniques) {

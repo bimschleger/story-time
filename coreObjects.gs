@@ -102,7 +102,7 @@ function convertLeadsToStringToArray(leadsToString) {
 /*
 *
 
-Creates empty core object
+Creates empty core object. Core includes names, foods, jobs, and adjectives.
 
 @return name {object} an object containing null values for each of the required name keys.
 
@@ -117,53 +117,4 @@ function newCore(id, name) {
   };
     
   return core;
-}
-
-
-/*
-
-Creates empty name object
-
-@return name {object} an object containing null values for each of the required name keys.
-
-*/
-
-function newFood() {
-  
-  let food = newCore();
-    
-  return food;
-  
-}
-
-  
-/*
-
-Creates empty job object
-
-@return job {object} an object containing null values for each of the required job keys.
-
-*/
-
-function newJob() {
-  
-  let job = newCore();
-    
-  return job;
-}
-
-  
-/*
-
-Creates empty adjective object
-
-@return adjective {object} an object containing null values for each of the required adjective keys.
-
-*/
-
-function newAdjective() {
-  
-  let adjective = newCore();
-    
-  return adjective;
 }

@@ -192,15 +192,16 @@ function getUniqueXVariables(rawMessage) { // rawMessage = null
     }
   }
  
-  // TODO: Remove when this goes live
-  //rawMessage = "This is a story about xName1. xName1 is good at xJob1. xName1 can dunk. xName2 once ate a xFood1 on the court. xName3 is the first test in a long story";
-  
   Object.keys(xVariableObject).forEach(function (key) {  
+    
+    // Gets the values within story.message.raw that match regex values
     let matchKeyArray = rawMessage.match(xVariableObject[key].regex);
     Logger.log("All results for '" + key + "': " + matchKeyArray);
     
     let uniques = [];
     
+    // Loops through the regex matched values for each xVariable key
+    // Adds unique values to the xVariablesObject
     if (matchKeyArray != null) {  // Prevents an error for null values, like xVariableAdj which I have not implemented yet.
       for (var i of matchKeyArray) {
         if (xVariableObject[key].uniques.indexOf(i) === -1) {
@@ -214,26 +215,4 @@ function getUniqueXVariables(rawMessage) { // rawMessage = null
   Logger.log("Added all unique values to xVariableObject.");
   
   return xVariableObject;
-}
-
-
-/*
-*
-
-Update the raw message to include the names for the variables.
-
-@param uniqueXVariables {array} array of the unique xVariables in rawMessage
-@param replacementValues {array} array of the values of that will replace each xVariable
-@param compiledMessage {string} the story.message.compiled of the compiled phrases.
-@return updatedMessage {string} basicall raw message with xName[1-9] replaced with story.people[x].name
-
-*
-*/
-
-function updateCompiledMessage(uniqueXVariables, replacementValues, compiledMessage) {
-  
-  // for (let i in uniqueXVariables) {
-    // compiledMessage.replace(uniqueXVariables[i], replacementValues[i])
-  // }
-  // return compiledMessage;
 }
