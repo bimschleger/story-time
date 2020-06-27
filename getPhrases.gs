@@ -40,7 +40,10 @@ function getStoryPhrases() {
       let index = Math.floor(Math.random()*(starterPhrases.length - 1));
       
       phrase = starterPhrases[index];
-      Logger.log("Got a starter phrase: '" + phrase + "'");
+      let phraseId = phrase[0];
+      let phraseSentence = phrase[1];
+      
+      Logger.log("Got random phrase id: '" + phraseId + "' and phrase '" + phraseSentence + "'.");
       loopCounter += 1;
       
     } 
@@ -49,15 +52,13 @@ function getStoryPhrases() {
       
       let index = Math.floor(Math.random()*(recentPhrase.leadsTo.length - 1));    // Gets the phrase ids for phrases that follow the previous phrase
       let phraseId = recentPhrase.leadsTo[index];
-      Logger.log("Got phrase id: " + phraseId);
 
       // All phrases are in a big 2D array.
       // When I filter, the system returns an array that contains the only array that meets the criteria
       // [[my array]]
       phrase = allPhrases.filter((row) => row[0] === phraseId);
       phrase = phrase[0];
-      Logger.log("Got phraseid: (" + phrase[0]);
-      
+      Logger.log("Got random phrase id: '" + phraseId + "' and phrase '" + phrase + "'.");
     }
     
     // Add the most recent phrase to the story object
@@ -70,7 +71,7 @@ function getStoryPhrases() {
     // Break the loop if the most recent phrase does not have values for leadsTo
     if (recentPhrase.leadsTo === null) {
       
-      Logger.log("Exited the 'while' the loop");
+      Logger.log("Collected all phrases.");
       finalPhrase = true;
       
     } 
@@ -82,7 +83,7 @@ function getStoryPhrases() {
   story.message.raw = compileRawMessage(story.phrases);
   
   // Create the compiled message that will get regex'd later on
-  story.message.compiled = compileRawMessage(story.phrases);
+  story.message.compiled = story.message.raw;
   
   return story;
   
@@ -104,7 +105,7 @@ function compileRawMessage(phrases) {
   let rawPhrases = phrases.map(phraseObject => phraseObject.phrase);
   
   let rawMessage = rawPhrases.join(". ");
-  Logger.log("Raw message is: " + rawMessage);
+  Logger.log("Generated raw message: '" + rawMessage + "'.");
   
   return rawMessage;
 }

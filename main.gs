@@ -25,10 +25,16 @@ Accept the custom inputs from the user, return them in a story
 
 function doPost(e) {
   
-  let response = newStory();
-  response.message.compiled = "We're not quite ready for you to tell a story. Stay tuned!";
+  // TODO: Something is not working quite right. Not getting back a response.
+  let inboundJson = JSON.parse(e.postData.parameter);
+  Logger.Log("received inbound JSON: " + JSON.stringify(inboundJson));
   
-  return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);    
+  let story = buildStory(inboundJson);
+  
+//  let response = newStory();
+//  response.message.compiled = "We're not quite ready for you to tell a story. Stay tuned!";
+  
+  return ContentService.createTextOutput(JSON.stringify(story)).setMimeType(ContentService.MimeType.JSON);    
 }
 
 
@@ -63,19 +69,28 @@ Build the core story object and fill all of the data.
 
 function buildStory(userInputs = null) {
   
-  let story = getStoryPhrases();
+  // Build the phrases and get the xVariables from the story.message.raw
+  var story = getStoryPhrases();
   let xVariables = getUniqueXVariables(story.message.raw);
   let sheetNames = Object.keys(xVariables);
   
+  // Checks if the user inputs exists or not, and adds the objects to the story
+  if (userInputs != null) {
+    Logger.log("\nUser inputs exist!\n");
+    Object.keys(userInputs).forEach(function(userSheet) {
+      Logger.log("Processing user input value '" + userInputs[userSheet] + "' for sheet '" + userSheet + "'.");
+      story = getCoreObject(story,userSheet,userInputs[userSheet]);
+    });
+  }
+  
+  // Adds any additional name, food, or job objects that the story requires.
   for (let sheet of sheetNames) {
-    let count = 0;
-    
-    while (count < xVariables[sheet].uniques.length) {
-      story = getCoreObject(story, sheet);
-      count += 1;
+    while (story[sheet].length < xVariables[sheet].uniques.length) {
+      story = getCoreObject(story, sheet);;
     }
   }
   
+  // Replaces xVariables in story.message.raw with the true variables.
   story.message.compiled = replaceXVariablesWithValues(story, xVariables);
   Logger.log("Here is the final story: " + JSON.stringify(story));
   
@@ -122,10 +137,10 @@ function replaceXVariablesWithValues(story, xVariables) {
 TODOs
 
 - Remove distinct URL to spreadsheet, and move into Properties for security reasons
-- Add user-submitted inputs to the correct sheet in sheets. find last now, add value to lastrow+1
 - Email notification to me when new user submitteed content is added. use standard GmailApp class
 - Text to speech to share the audio file of the story. use something like https://aws.amazon.com/polly/ to handle TTS
 - More complex story branching
 - Log each unique execution: datetime, get/post, read/listen/write, name, job, food, phrase1, phrase2, phrase3
+- when generating multiple random values, don't let the system pick the same value twice.
 
 */

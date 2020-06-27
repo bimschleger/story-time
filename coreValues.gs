@@ -11,8 +11,7 @@ Get all of the person objects that we need for the story.
 *
 */
 
-function getCoreObject(story, sheetName, userInput = null) { //TODO: remove default values when ready to test.
-  // getCoreObject(story = newStory(), sheetName = "foods", userInput = null)
+function getCoreObject(story, sheetName, userInput = null) {
   
   var sheet = getSheetData(sheetName);
   var value;
@@ -20,7 +19,7 @@ function getCoreObject(story, sheetName, userInput = null) { //TODO: remove defa
   if (userInput != null) { // If there is a user input, check to see if the input exists
     value = getSpecificValueFromSheet(sheet, userInput); //if the value exists, generate an object from it
     
-    if (typeof value === "undefined") {  // if the value does not exist, add teh value to the sheet and make an object from it
+    if (value === null) {  // if the value does not exist, add teh value to the sheet and make an object from it
       value = addNewValueToSheet(sheet, userInput)
     }  
     
@@ -70,15 +69,24 @@ function getSpecificValueFromSheet(sheet, value) {
   // Get value from the sheet
   let values = sheet.getRange(startingRow, startingColumn, numRows, numColumns).getValues();
   let matchingArray = values.filter(row => row[1] === value);  // generates a 2D array of rows
-  Logger.log("matches with values: " + matchingArray);
+  Logger.log("Matches with values: " + matchingArray);
+  Logger.log(matchingArray);
   
-  // Get the one matching array  the filtered data.
-  let matchingValue = matchingArray[0];
-  let coreObject = newCore(matchingValue[0],matchingValue[1]);
   
-  Logger.log("Got value: " + JSON.stringify(coreObject));
-  
-  return coreObject;
+  // Check if there is a match or not
+  if (matchingArray.length === 0) {
+    return null;
+  }
+  else {
+    // Get the one matching array  the filtered data.
+    let matchingValue = matchingArray[0];
+    Logger.log(matchingValue);
+    let coreObject = newCore(matchingValue[0],matchingValue[1]);
+    
+    Logger.log("Got existing value: " + JSON.stringify(coreObject));
+    
+    return coreObject;
+  }
 }
 
 
@@ -109,7 +117,7 @@ function addNewValueToSheet(sheet, value) {
   
   // Add the value to the appropriate sheet
   sheet.getRange(insertRow, insertColumn, numRows, numColumns).setValues(rowData);
-  Logger.log("Inserted the value '" + value + "'.");
+  Logger.log("Inserted into '" + sheet + "' the value '" + value + "'.");
   
   let coreObject = newCore(lastRow, value);
   Logger.log("Created the object '" + JSON.stringify(coreObject) + "'");
@@ -142,18 +150,18 @@ function getRandomValueFromSheet(sheet) {
   
   // Get value from the sheet
   let values = sheet.getRange(startingRow, startingColumn, numRows, numColumns).getValues();
-  Logger.log("Got values: " + values);
+  // Logger.log("Got values: " + values);
   
   // Select single value from data
   let index = Math.floor(Math.random() * numRows);
-  Logger.log("Got random index '" + index + "'");
+  // Logger.log("Got random index '" + index + "'");
   
   // .getValues is a little funky, returns a 2D array. 
   // Must specify desired row and column, even if only one column.
   let value = values[index];
   
   let coreObject = newCore(value[0], value[1]);
-  Logger.log("Got random object: '" + JSON.stringify(coreObject) + "'" );
+  Logger.log("Got random '" + sheet + "' object: '" + JSON.stringify(coreObject) + "'." );
   
   return coreObject;
 }
@@ -209,7 +217,7 @@ function getUniqueXVariables(rawMessage) { // rawMessage = null
           Logger.log("Added '" + i + "' to unique '" + key + "' values.");
         }
       }
-      Logger.log("Unique results for '" + key + "': " + xVariableObject[key].uniques);
+      Logger.log("Found " + xVariableObject[key].uniques.length + " unique results for '" + key + "': " + xVariableObject[key].uniques);
     }
   });
   Logger.log("Added all unique values to xVariableObject.");
