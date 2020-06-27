@@ -23,13 +23,15 @@ Accept the custom inputs from the user, return them in a story
 
 */
 
+
 function doPost(e) {
   
   // TODO: Something is not working quite right. Not getting back a response.
-  let inboundJson = JSON.parse(e.postData.parameter);
-  Logger.Log("received inbound JSON: " + JSON.stringify(inboundJson));
+  let requestRaw = e.postData.contents;
+  let requestJson = JSON.parse(requestRaw);
+  Logger.log("received inbound JSON: " + JSON.stringify(requestJson));
   
-  let story = buildStory(inboundJson);
+  let story = buildStory(requestJson);
   
 //  let response = newStory();
 //  response.message.compiled = "We're not quite ready for you to tell a story. Stay tuned!";
@@ -84,6 +86,7 @@ function buildStory(userInputs = null) {
   }
   
   // Adds any additional name, food, or job objects that the story requires.
+  // TODO: figure out deduplication. e.g. if I get a random ID and it alrady exists within story[sheet], then pass
   for (let sheet of sheetNames) {
     while (story[sheet].length < xVariables[sheet].uniques.length) {
       story = getCoreObject(story, sheet);;
