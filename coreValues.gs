@@ -21,24 +21,24 @@ function getCoreObject(story, sheetName, userInput = null) {
     
     if (value === null) {  // if the value does not exist, add teh value to the sheet and make an object from it
       value = addNewValueToSheet(sheet, userInput)
-    }  
+    } 
     
   } else {
       value = getRandomValueFromSheet(sheet); // just get any random value from the sheet
+  }
+  
+  // If the variable object already has been added to story, run again and get a different variable.
+  storyObjectIds = story[sheetName].map(value => value.id);
+  
+  if (storyObjectIds.indexOf(value.id) != -1) {
+    Logger.log("Detected duplicate value: '" + value.name + "'.");
+    getCoreObject(story, sheetName);
   }
   
   // Add the value to the story object
   story[sheetName].push(value);
   Logger.log(JSON.stringify(story));
   
-  // while addedStuff.length < neededStuff, get some stuff
-  // get a new name that is not yet added into story.people array
-    // get list of ids taht are current in story.people (something like currentPeople = story.people.map(person => person.id) )
-    // while (story.people.length < unqiue), //check numbes of name in the people array vs. how many we need
-      //get randomId name/row. 
-      // if (currentPeople.indexOf(randomId) === -1)
-        // create newPerson object
-        // story.people.push(newPersonObject)
   return story;
 }
 
